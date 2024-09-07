@@ -51,7 +51,35 @@ SELECT Customer.FirstName, Customer.LastName, SUM(Invoice.Total) AS InvoiceAmoun
 --Quantity (Integer)
 
 -- 2
--- I used the built-in SQL table builder to create the three tables.
+-- Create Customers Table
+CREATE TABLE Customers (
+    CustomerId INTEGER PRIMARY KEY,
+    FirstName TEXT NOT NULL,
+    LastName TEXT NOT NULL,
+    Email TEXT NOT NULL,
+    PhoneNumber TEXT
+);
+
+-- Create Flowers Table
+CREATE TABLE Flowers (
+    FlowerId INTEGER PRIMARY KEY,
+    FlowerName TEXT NOT NULL,
+    FlowerColor TEXT NOT NULL,
+    Price DECIMAL(5, 2) NOT NULL,
+    StockQuant INTEGER NOT NULL,
+);
+
+-- Create Orders Table
+CREATE TABLE Orders (
+    OrderId INTEGER PRIMARY KEY,
+    CustomerId INTEGER,
+    FlowerId INTEGER,
+    Timestamp DATE NOT NULL,
+    Quantity INTEGER NOT NULL,
+    FOREIGN KEY (CustomerId) REFERENCES Customers(CustomerId),
+    FOREIGN KEY (FlowerId) REFERENCES Flowers(FlowerId)
+);
+
 
 -- 3
 INSERT INTO Customers (CustomerId, FirstName, LastName, Email, PhoneNumber) VALUES (1, 'Carlie', 'Stewart', 'ayu6cp@virginia.edu', '757-915-4697'),  (2, 'John', 'Doe', 'johnd@example.com', '123-456-7890'), (3, 'Walter', 'White', 'walterwhite@walterwhite.com', '222-222-2222'),   (4, 'Travis', 'Scott', 'travis@travis.com', '555-333-4444'), (5, 'Olivia', 'Rodrigo', 'oliviar@olivia.com', '555-555-5555');
