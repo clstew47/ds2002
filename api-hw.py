@@ -2,13 +2,17 @@ import json
 import pandas as pd
 import json
 import requests
+from dotenv import load_dotenv
+import os
 
+load_dotenv()
 
 # take user input for a stock using Ticker symbol with input command 
 stock = input().upper()
+print("Getting info for Ticker " + stock + '...') # ticker name
 
 
-apikey = 'YFQLDJisNLDlNaaDUaiFaBAlA8k39053BySALYwe'
+apikey = os.getenv('YAHOO_API_KEY')
 
 # first APL call - get current price and other information
 url_1 = "https://yfapi.net/v6/finance/quote"
@@ -64,7 +68,6 @@ else:
 
 # Print out the stock information
 if response_2.status_code == 200 and response_1.status_code == 200:
-    print("Ticker Name: " + stock) # ticker name
     print(f"{company_name} Price: ${current_price}") # full name of stock + current market price
     print(f"Target Mean Price: ${target_mean_price}") # target mean price
     print(f"52 Week High: ${fifty_two_week_high}") # 52 week high
@@ -87,24 +90,23 @@ if trending_response.status_code == 200:
     # print(top_5_trending_stocks)
     for rank, s in enumerate(top_5_trending_stocks, start=1):
         print(f"Rank {rank} - Ticker: {s}")
-else:
-    print("Failed to fetch trending stocks.")
+else: 
+    print(f"Failed to fetch stock data: {trending_response.status_code} - {trending_response.text}")
 
     
 # Create a dataframe to store all data
-if trending_response.status_code == 200 and response_1.status_code == 200 and response_2.status_code == 200:
-    df = pd.DataFrame({
-        'Ticker': [stock],
-        'Company Name': [company_name],
-        'Current Price': [current_price],
-        'Target Mean Price': [target_mean_price],
-        '52 Week High': [fifty_two_week_high],
-        '52 Week Low': [fifty_two_week_low],
-        '5 Current Trending Stocks': [top_5_trending_stocks]
-    })
-    # print(df)
-    # converting data into a CSV file
+df = pd.DataFrame({
+    'Ticker': [stock],
+    'Company Name': [company_name],
+    'Current Price': [current_price],
+    'Target Mean Price': [target_mean_price],
+    '52 Week High': [fifty_two_week_high],
+    '52 Week Low': [fifty_two_week_low],
+    'Top 5 Current Trending Stocks': [top_5_trending_stocks]
+})
 
-    df.to_csv(f'{stock}-data.csv', header=True, index=False)
-    print(f'CSV created named {stock}-data.csv')
+# Convert data into a CSV file
+df.to_csv(f'{stock}-data.csv', header=True, index=False)
+print(f'CSV created named {stock}-data.csv')
 
+# print(df)
